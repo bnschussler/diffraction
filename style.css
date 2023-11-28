@@ -1,0 +1,175 @@
+body{
+	margin:0px;
+	background: #303030;
+}
+
+a{
+	color:#6666ff;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 20px;
+}
+
+.canvas{
+  max-width: calc(50vw - 100px);
+	width: 45vw;
+	height: min(100vh,min(50vw - 98px,45vw));
+	top: 0px;
+	z-index: -1;
+	image-rendering: smooth;
+	background: rgb(0,0,0);
+	border: 1px solid rgb(255, 255, 255); 
+
+}
+
+
+h1,.interactive h2,.interactive h3,.interactive h4,.interactive h5,.interactive p{
+	text-align:center;
+}
+
+.interactive h1,.interactive h2,.interactive h3,.interactive h4,.interactive h5,.interactive p{
+	color: #cfcfcf;
+}
+
+h2{
+	color: #b0b0b0;
+}
+
+h1, h2, h3, h4, h5, p, button{
+	font-family: Arial, Helvetica, sans-serif;	
+}
+
+body > p{
+	margin: 20px;
+}
+
+input[type=text]{
+	border-radius: 5px;
+	border: none;
+	background-color: #e0e0e0;
+	width: 4ch;
+}
+
+input[type=number]{
+	border: none;
+	background-color: #e0e0e0;
+	width:auto;
+	height:auto;
+}
+
+button{
+	background: #e0e0e0;
+	border: none;
+	border-radius: 5px;
+	font-size: 12pt;
+	transition: background .125s;
+	margin: 5px;
+	width: calc(100% - 10px);
+	height: 50px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+button:hover{
+	background: #b0b0b0;
+}
+button:active{
+	background: #909090;
+}
+
+
+.column{
+  display: flex;
+  flex-flow: column wrap;
+  /*border: 1px solid green;*/
+  height: min-content;
+}
+
+
+.column:not(.dropdown){
+	  flex: 1 1 0;
+}
+
+.row{
+  display: flex;
+  flex-flow: row wrap;
+  flex: 1;
+  justify-content: space-around;
+  /*border: 1px solid black;*/
+}
+
+.pad > *{
+	padding: 10px;
+}
+
+
+.interactive{
+	padding: 10px;
+	background: #303030;
+	width: 190px;
+}
+
+.dropdown .toggle,.options {
+	text-align: center;
+	padding: 10px;
+	transition: background-color .25s;
+}
+
+.dropdown{
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 5px;
+	border-color: #a0a0a0;
+	width:228px;
+}
+
+.dropdown *{
+	padding: 0px;
+	margin: 0px;
+}
+
+.side_bordered{
+	border-right: 1px solid #808080;
+}
+
+.option{
+	border-top: 1px solid #808080;
+	border-bottom: 1px solid #808080;
+	padding: 5px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.option.toggle{
+	margin: 5px;
+	padding: 0px;
+	border: 1px solid #808080;
+}
+
+.option.toggle p{
+	margin: 0px;
+	padding: 10px;
+}
+
+.option p{
+	margin: 0px;
+}
+
+.toggle:hover{
+	background: #808080 !important;
+}
+
+.toggle{
+	border-radius: 5px;
+}
+
+.toggle input{
+	width: 0px;
+	height: 0px;
+	opacity: 0;
+	position: absolute;
+}
+
+.dropdown .options{
+	transition: height 1s ease;
+	overflow: hidden;
+}

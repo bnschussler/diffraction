@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <link rel="stylesheet" href="style.css">
+   </head>
+   <body>
+      <div class="row">
+         <div class="row">
+            <div class="column">
+               <h2 class="row">Aperture</h2>
+               <canvas class="canvas" id="canvas" width="256" height="256"></canvas>
+            </div>
+         </div>
+         <div class="column interactive" style="margin-top: 100px;">
+            <div class="row">
+               <p>Click and drag to draw<br><br>Hold SHIFT to erase</p>
+            </div>
+            <div class="row" style="margin-bottom: 10px;">
+               <button onclick="reset()">Reset</button>
+            </div>
+            <div class="row">
+               <div class="option">
+                  <p>Line Width:
+                     <input type="text" id="zt" value="5" class="break small" oninput="if(!isNaN(this.value)){lineWidth=this.value}"/>
+                  </p>
+                  <input type="range" value="5" id="zs" min="1" max="50" step=".05" oninput="if(!isNaN(this.value)){lineWidth=this.value}"/>
+               </div>
+            </div>
+            <div class="row">
+               <div class="option">
+                  <p>log(Brightness):
+                     <input type="text" id="it" value="0" class="break small" oninput="autoBrightness=false;autoBOff();if(!isNaN(this.value)){I=Math.exp(this.value);softdraw()}"/>
+                  </p>
+                  <input type="range" value="0" id="is" min="-15" max="5" step=".05" oninput="autoBrightness=false;autoBOff();if(!isNaN(this.value)){I=Math.exp(this.value);softdraw()}"/>
+                  <div id="autoBdiv" class="option toggle">
+                     <label for="autoBright">
+                        <p class="break">Auto Adjust Brightness
+                        <input onclick="autoBrightness=this.checked;softdraw();" type="checkbox" id="autoBright" checked/></p>
+                     </label>
+                  </div>
+               </div>
+            </div>
+            <div class="row" style="margin-top: 10px;">
+               <a href="https://en.wikipedia.org/wiki/Fraunhofer_diffraction">What is this?</a>
+            </div>
+            <div class="row" style="margin-top: 10px;">
+               <a href="https://bnschussler.github.io/Website/">More stuff by me!</a>
+            </div>
+         </div>
+         <div class="column">
+            <h2 class="row">Diffraction Pattern</h2>
+            <canvas class="canvas" id="canvas1" width="256" height="256"></canvas>
+         </div>
+      </div>
+      <script src="inputHandling.js"></script>
+      <script src="canvasMath.js"></script>
+   </body>
+</html>
