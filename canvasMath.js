@@ -3,14 +3,15 @@
 //variables
 var x,x1,x2,y,y1,y2,i,k,bb,ang,cos,sin,sum,sum1,temp,scale,r,templineWidth,I1,I2;
 
-var Fraunhofer=true;
-var lineWidth=5;
-var shiftkey=false;
-var autoBrightness=true;
-var monochrome=true;
+var Fraunhofer=true;  //unused
+var monochrome=true;  //unused
+
+var showPhase=document.getElementById('phase').checked;
+var lineWidth=document.getElementById('zt').value;
+var shiftkey=false;   //erase mode
+var autoBrightness=document.getElementById('autoBright').checked;
 var I=1;
 var mouseDown=false;
-var recalculate=false;
 var prevmouseX=[undefined,undefined];
 var prevmouseY=[undefined,undefined];
 var mouseX=0; //mouse position in canvas pixel coords
@@ -50,6 +51,7 @@ const imageData1 = ctx1.getImageData(0, 0, width, height);
 const data1 = imageData1.data;
 const dataBuffer1=new Uint8Array(height*width);
 
+/*
 const g=new Float32Array(height*width*2);
 for(x=0;x<width;x++){
   for(y=0;y<height;y++){
@@ -58,11 +60,14 @@ for(x=0;x<width;x++){
     g[2*(x+width*y)+1]=0;//Math.sin(2*Math.PI/λ*r);
   }
 }
-//fft2d(g,g,width,height,false,false)
+fft2d(g,g,width,height,false,false)*/
 
 document.addEventListener('keydown',(event)=>{
   if(event.key=="Shift"){
     shiftkey=true;
+  }
+  if(event.key=="r"){
+    reset();
   }
 })
 document.addEventListener('keyup',(event)=>{
@@ -93,14 +98,19 @@ document.addEventListener('mousemove',(event)=>{
 document.addEventListener('touchstart',(event)=>{
   rawmx = event.targetTouches[0].clientX; 
   rawmy = event.targetTouches[0].clientY;
-  if(mouseDown){addInk();}
+  addInk();
+})
+
+document.addEventListener('touchend',(event)=>{
+  prevmouseX=[undefined,undefined];
+  prevmouseY=[undefined,undefined];
 })
 
 document.addEventListener('touchmove',(event)=>{ //https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/HTML-canvas-guide/AddingMouseandTouchControlstoCanvas/AddingMouseandTouchControlstoCanvas.html
   event.preventDefault();
   rawmx = event.targetTouches[0].clientX; 
   rawmy = event.targetTouches[0].clientY;
-  if(mouseDown){addInk();}
+  addInk();
 })
 
 function reset(){
@@ -125,10 +135,10 @@ function addInk(move=false){
   ctx.lineWidth = templineWidth;
   mouseX = Math.floor( (rawmx - bb.left) / bb.width * width ); //from https://stackoverflow.com/questions/72379573/get-canvas-pixel-position-from-mouse-coordinates
   mouseY = Math.floor( (rawmy - bb.top) / bb.height * height );
-  if((move || shiftkey) && mouseX>0 && mouseX<width && mouseY>0 && mouseY<height){
+  if((move || shiftkey) && mouseX>=0 && mouseX<width && mouseY>=0 && mouseY<height){
     for(x=-templineWidth;x<templineWidth+1;x++){
       for(y=-templineWidth;y<templineWidth+1;y++){
-        if((x**2+y**2<(templineWidth)**2/4) && (x+mouseX)>0 && (x+mouseX)<width && (y+mouseY)>0 && (y+mouseY)<height){
+        if((x**2+y**2<(templineWidth)**2/4) && (x+mouseX)>=0 && (x+mouseX)<width && (y+mouseY)>=0 && (y+mouseY)<height){
           data[4*((x+mouseX)+width*(y+mouseY))]=shiftkey?0:255;
           data[4*((x+mouseX)+width*(y+mouseY))+1]=shiftkey?0:255;
           data[4*((x+mouseX)+width*(y+mouseY))+2]=shiftkey?0:255;
@@ -139,7 +149,7 @@ function addInk(move=false){
     ctx.putImageData(imageData,0,0)
   }
   else{
-    if(mouseX>0 && mouseX<width && mouseY>0 && mouseY<height && prevmouseX[0]!=undefined){  
+    if(mouseX>=0 && mouseX<width && mouseY>=0 && mouseY<height && prevmouseX[0]!=undefined){  
       ctx.beginPath();
       ctx.moveTo(prevmouseX[0]+.5,prevmouseY[0]+.5);
       ctx.lineTo(prevmouseX[1]+.5,prevmouseY[1]+.5);
@@ -157,6 +167,26 @@ function addInk(move=false){
   draw();
 }
 
+function HSVtoRGB(h, s, v) { https://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately
+    var r, g, b, i, f, p, q, t;
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+    return [Math.round(r * 255),
+            Math.round(g * 255),
+            Math.round(b * 255)];
+}
+
 function ImtoBuffer(){
   for(x=0;x<width;x++){
     for(y=0;y<height;y++){
@@ -167,21 +197,36 @@ function ImtoBuffer(){
   }
 }
 
-function buffer1toIm1(){
-  for(x=0;x<width;x++){
-    for(y=0;y<height;y++){
-      /*x1=monochrome?x:Math.round(6/7*(x-width/2)+width/2)
-      x2=monochrome?x:Math.round(4/7*(x-width/2)+width/2)
-      y1=monochrome?y:Math.round(6/7*(y-height/2)+height/2)
-      y2=monochrome?y:Math.round(4/7*(y-height/2)+height/2)
-      data1[4*(x+width*y)+0]=dataBuffer1[x2+width*y2];
-      data1[4*(x+width*y)+1]=dataBuffer1[x1+width*y1];
-      data1[4*(x+width*y)+2]=dataBuffer1[x+width*y];
-      data1[4*(x+width*y)+3]=255;*/
-      data1[4*(x+width*y)+0]=dataBuffer1[x+width*y];
-      data1[4*(x+width*y)+1]=dataBuffer1[x+width*y];
-      data1[4*(x+width*y)+2]=dataBuffer1[x+width*y];
-      data1[4*(x+width*y)+3]=255;
+function buffer1toIm1(showPhase,complexDataBuffer){
+  if(!showPhase){
+    for(x=0;x<width;x++){
+      for(y=0;y<height;y++){
+        /*x1=monochrome?x:Math.round(6/7*(x-width/2)+width/2)
+        x2=monochrome?x:Math.round(4/7*(x-width/2)+width/2)
+        y1=monochrome?y:Math.round(6/7*(y-height/2)+height/2)
+        y2=monochrome?y:Math.round(4/7*(y-height/2)+height/2)
+        data1[4*(x+width*y)+0]=dataBuffer1[x2+width*y2];
+        data1[4*(x+width*y)+1]=dataBuffer1[x1+width*y1];
+        data1[4*(x+width*y)+2]=dataBuffer1[x+width*y];
+        data1[4*(x+width*y)+3]=255;*/
+        data1[4*(x+width*y)+0]=dataBuffer1[x+width*y];
+        data1[4*(x+width*y)+1]=dataBuffer1[x+width*y];
+        data1[4*(x+width*y)+2]=dataBuffer1[x+width*y];
+        data1[4*(x+width*y)+3]=255;
+      }
+    }
+  }
+  else{
+    for(x=0;x<width;x++){
+      for(y=0;y<height;y++){
+        //alert(Math.atan2(complexDataBuffer[2*(x+width*y)+1],complexDataBuffer[2*(x+width*y)]));
+        //temp=HSVtoRGB((Math.atan2(complexDataBuffer[2*(x+width*y)+1],complexDataBuffer[2*(x+width*y)])/(2*Math.PI))+.5,1,dataBuffer1[x+width*y]);
+        temp=HSVtoRGB((Math.atan2(complexDataBuffer[2*(((x+width/2)%width)+width*((y+height/2)%height))+1],complexDataBuffer[2*(((x+width/2)%width)+width*((y+height/2)%height))])/(2*Math.PI))+.5,1,dataBuffer1[x+width*y]/255);
+        data1[4*(x+width*y)+0]=temp[0];
+        data1[4*(x+width*y)+1]=temp[1];
+        data1[4*(x+width*y)+2]=temp[2];
+        data1[4*(x+width*y)+3]=255;
+      }
     }
   }
 }
@@ -218,14 +263,14 @@ function fft2d(arr,out,width,height,inv,realInput){
   for(y=0;y<height;y++){
     if(realInput){
       for(x=0;x<width;x++){
-        tempx[2*x]=arr[x+width*y];
+        tempx[2*x]=arr[((x+width/2)%width)+width*((y+height/2)%height)];
         tempx[2*x+1]=0;
       }
     }
     else{
       for(x=0;x<width;x++){
-        tempx[2*x]=arr[2*(x+width*y)];
-        tempx[2*x+1]=arr[2*(x+width*y)+1];
+        tempx[2*x]=arr[2*(((x+width/2)%width)+width*((y+height/2)%height))];
+        tempx[2*x+1]=arr[2*(((x+width/2)%width)+width*((y+height/2)%height))+1];
       }      
     }
     tempx=fft(tempx,inv);
@@ -272,6 +317,7 @@ function autoI(arr){
     }
 }
 
+/*
 function convolve(f,ftg,out,width,height,realInput){  //assumes ftg is the fourier transform of g; realInput for whether f is real or not
   fft2d(f,complexDataBuffer,width,height,false,realInput);
   for(x=0;x<width;x++){
@@ -283,6 +329,7 @@ function convolve(f,ftg,out,width,height,realInput){  //assumes ftg is the fouri
   }
   fft2d(complexDataBuffer,out,width,height,true,false);
 }
+*/
 
 function swap(){
   ctx.putImageData(imageData1,0,0)
@@ -307,9 +354,8 @@ function draw(){
   }
 
   intensity(complexDataBuffer,dataBuffer1,width,height)
-  //intensity(g,dataBuffer1,width,height)
   
-  buffer1toIm1();
+  buffer1toIm1(showPhase,complexDataBuffer);
 
   ctx1.putImageData(imageData1,0,0)
 }
@@ -320,9 +366,11 @@ function softdraw(){
   if(autoBrightness){
     autoI(complexDataBuffer);
   }
+
   intensity(complexDataBuffer,dataBuffer1,width,height)
-  //intensity(g,dataBuffer1,width,height)
-  buffer1toIm1();
+
+  buffer1toIm1(showPhase,complexDataBuffer);
+
   ctx1.putImageData(imageData1,0,0)
 }
 

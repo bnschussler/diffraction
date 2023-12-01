@@ -1,3 +1,4 @@
+
 var linked=[
 ["zt","zs"],
 ["it","is"]];

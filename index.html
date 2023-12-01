@@ -11,9 +11,9 @@
                <canvas class="canvas" id="canvas" width="256" height="256"></canvas>
             </div>
          </div>
-         <div class="column interactive" style="margin-top: 100px;">
+         <div class="column interactive" style="margin-top: 50px;">
             <div class="row">
-               <p>Click and drag to draw<br><br>Hold SHIFT to erase</p>
+               <p>Click and drag to draw on aperture<br><br>Hold SHIFT to erase</p>
             </div>
             <div class="row" style="margin-bottom: 10px;">
                <button onclick="reset()">Reset</button>
@@ -36,6 +36,16 @@
                      <label for="autoBright">
                         <p class="break">Auto Adjust Brightness
                         <input onclick="autoBrightness=this.checked;softdraw();" type="checkbox" id="autoBright" checked/></p>
+                     </label>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="option">
+                  <div id="showPhase" class="option toggle">
+                     <label for="phase">
+                        <p class="break">Show Phase
+                        <input onclick="showPhase=this.checked;softdraw();" type="checkbox" id="phase" unchecked/></p>
                      </label>
                   </div>
                </div>
