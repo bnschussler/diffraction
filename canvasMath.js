@@ -51,6 +51,23 @@ const imageData1 = ctx1.getImageData(0, 0, width, height);
 const data1 = imageData1.data;
 const dataBuffer1=new Uint8Array(height*width);
 
+for(i=0;i<width*height;i+=1){/*-14908*/
+  //temp=(((drawHereText>>BigInt(width*height-i))&BigInt(1))==BigInt(1))?255:0
+  temp=drawHereText[i]=='1'?255:25;
+  data[4*i]=temp;
+  data[4*i+1]=temp;
+  data[4*i+2]=temp;
+  data[4*i+3]=255;
+  temp=stuffHereText[i]=='1'?255:25;
+  data1[4*i]=temp;
+  data1[4*i+1]=temp;
+  data1[4*i+2]=temp;
+  data1[4*i+3]=255;
+}
+ctx.putImageData(imageData,0,0);
+ctx1.putImageData(imageData1,0,0);
+var eraseOnDraw=true;
+
 /*
 const g=new Float32Array(height*width*2);
 for(x=0;x<width;x++){
@@ -115,9 +132,9 @@ document.addEventListener('touchmove',(event)=>{ //https://developer.apple.com/l
 
 function reset(){
   ctx.clearRect(0,0,width,height);
+  ctx1.clearRect(0,0,width,height);
   imageData=ctx.getImageData(0, 0, width, height);
   data=imageData.data;
-  draw();
 }
 
 function mod(x,m){
@@ -129,6 +146,11 @@ function interp(startx,endx,starty,endy,x){
 }
 
 function addInk(move=false){
+  if(eraseOnDraw){
+    reset();
+    eraseOnDraw=false;
+  }
+
   bb = canvas.getBoundingClientRect(); 
   ctx.strokeStyle=shiftkey?"#000000":"#FFFFFF";
   templineWidth=shiftkey?50:Math.round(lineWidth);

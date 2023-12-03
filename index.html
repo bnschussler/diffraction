@@ -21,9 +21,9 @@
             <div class="row">
                <div class="option">
                   <p>Line Width:
-                     <input type="text" id="zt" value="5" class="break small" oninput="if(!isNaN(this.value)){lineWidth=this.value}"/>
+                     <input type="text" id="zt" value="3" class="break small" oninput="if(!isNaN(this.value)){lineWidth=this.value}"/>
                   </p>
-                  <input type="range" value="5" id="zs" min="1" max="50" step=".05" oninput="if(!isNaN(this.value)){lineWidth=this.value}"/>
+                  <input type="range" value="3" id="zs" min="1" max="50" step=".05" oninput="if(!isNaN(this.value)){lineWidth=this.value}"/>
                </div>
             </div>
             <div class="row">
@@ -63,6 +63,7 @@
          </div>
       </div>
       <script src="inputHandling.js"></script>
+      <script src="pixelData.js"></script>
       <script src="canvasMath.js"></script>
    </body>
 </html>
