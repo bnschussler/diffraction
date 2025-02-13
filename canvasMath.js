@@ -79,6 +79,16 @@ for(x=0;x<width;x++){
 }
 fft2d(g,g,width,height,false,false)*/
 
+canvas.addEventListener("touchstart", function(event){event.preventDefault()})  //hopefully keeps page from scrolling on mobile
+canvas.addEventListener("touchmove", function(event){event.preventDefault()})
+canvas.addEventListener("touchend", function(event){event.preventDefault()})
+canvas.addEventListener("touchcancel", function(event){event.preventDefault()})
+
+canvas1.addEventListener("touchstart", function(event){event.preventDefault()})
+canvas1.addEventListener("touchmove", function(event){event.preventDefault()})
+canvas1.addEventListener("touchend", function(event){event.preventDefault()})
+canvas1.addEventListener("touchcancel", function(event){event.preventDefault()})
+
 document.addEventListener('keydown',(event)=>{
   if(event.key=="Shift"){
     shiftkey=true;
@@ -124,7 +134,6 @@ document.addEventListener('touchend',(event)=>{
 })
 
 document.addEventListener('touchmove',(event)=>{ //https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/HTML-canvas-guide/AddingMouseandTouchControlstoCanvas/AddingMouseandTouchControlstoCanvas.html
-  event.preventDefault();
   rawmx = event.targetTouches[0].clientX; 
   rawmy = event.targetTouches[0].clientY;
   addInk();
